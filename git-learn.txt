@@ -38,12 +38,12 @@ git commit -m "added file2 and updated file1"
 git status
 
 -------------------
-#управління версіями файлів
+		#управління версіями файлів
 
-echo "helloGit" > file1.txt	(step1) untracked 
-git add file1.txt		(step2) staged	
-git commit -m "Version1"	(step3) copy in Local Repository
-git push			(step4) Copy in Remote Repository
+		echo "helloGit" > file1.txt	(step1) untracked 
+		git add file1.txt		(step2) staged	
+		git commit -m "Version1"	(step3) copy in Local Repository
+		git push			(step4) Copy in Remote Repository
 -------------------
 
 git status
