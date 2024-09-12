@@ -1,0 +1,252 @@
+
+git --version
+git config --global user.name "name"
+git config --global user.email "fff@rr.com"
+git config -l
+-----------------
+#local repository
+cd /Documents/myProject
+
+git init .     #створити базу даних git
+
+git status
+
+echo "file1" > file1.txt
+
+git status
+
+git add .	# підготувати файли до коміту(знімку проекта)
+
+git status
+
+git commit -m "my first commit"
+
+git status
+
+echo "file2" > file2.txt
+
+echo "file1 test page hello" >> file1.txt
+
+git status
+
+git add .   (or git add *)
+
+git status
+
+git commit -m "added file2 and updated file1"
+
+git status
+
+-------------------
+#управління версіями файлів
+
+echo "helloGit" > file1.txt	(step1) untracked 
+git add file1.txt		(step2) staged	
+git commit -m "Version1"	(step3) copy in Local Repository
+git push			(step4) Copy in Remote Repository
+-------------------
+
+git status
+
+git log		#подивитися історію комітів
+
+git log -1	#подивитися тільки останій коміт
+git log -1 -p	#подивитися зміни які були зробленні в останьому коміті
+
+-------------------
+#відновлення файлу
+
+echo "@##^$8" > file1.txt
+
+cat file1.txt
+	@##^$8
+
+git status
+
+git checkout -- file1.txt	#якщо зіпсували файл то повурнутися в попередній стан файлу
+
+cat file1.txt
+	file1 test page hello
+-------------------
+
+git diff --staged	#показує те що буде записано в git log якщо зробити git commit 
+
+-------------------
+# ігнорувати файли та дереикторії які не топрібні для коміту
+
+nano .gitignore		#створити файл та записати туди файли та декикторії які не будуть включенні
+
+-------------------
+#GitHub push
+
+cd /Documents
+
+git clone https://...git	#копіювати з GitHub репозиторій
+
+echo "hello" > file.txt
+
+git status
+
+git add .
+
+git commit -m "commot discriptions"
+
+git push origin		#відправити на GitHub repository
+
+-------------------
+#налаштування ssh-key
+
+ssh-keygen
+ll ~/.ssh
+	id_rsa
+	id_rsa.pub
+
+cat ~/.ssh/id_rsa.pub	#копіювати 
+
+GitHub -> Setting -> SSH and GPG keys -> New SSH key -> paste key and create name
+
+git remote -v
+
+git remote set-url origin git@github.com:......git
+
+git remote -v
+
+---------------------
+#Branch
+
+				|Branch fix_error ->   version1 version2 version3
+
+				|Branch Main      ->   version1 version2 version3
+
+				|Branch test      ->   version1 version2 version3
+
+
+git init myapp
+git status 
+git branch
+echo "ver1" > index.html	|Branch Main->  version1 
+git add .
+git commit -m "Version1.0"
+git branch
+git log
+
+
+echo "ver2" > index.html	|Branch Main->  version1 version2
+git add .
+git commit -m "Version2.0"
+git branch
+git log
+
+
+echo "ver3" > index.html	|Branch Main->  version1 version2 version3
+git add .
+git commit -m "Version3.0"
+git branch
+git log
+
+
+#create other branch
+git branch fix_error	#створити гілку
+git branch		#переглянути гілки
+	fix_error
+	*main
+git chechout fix_error	#перейти на іншу гілку
+git branch
+	*fix_error
+	main
+git checkout main	#перейти на головну гірку
+git branch -d fix_error	#видалити гілку
+git branch
+	*main
+git checkout -b dima_fix_error	#створити гілку та перейти на нову гілку
+git branch
+	*dima_fix_error
+	main
+
+
+
+echo "ver4" > ./index/html		|Branch dima_fix_error ->   version1 version2 version3 version4
+git add .				|Branch Main           ->   version1 version2 version3
+git commit -m "Version4.0" 
+git log
+
+git checkout main
+git branch
+	dima_fix_error
+	*main
+
+
+#з'єднання гілок
+
+git merge dima_fix_error	#з'єднати version4 в головну гілку main (з'єндати гілки)
+git log
+
+					|Branch dima_fix_error ->   version1 version2 version3 version4
+					|Branch Main           ->   version1 version2 version3 version4
+
+
+git branch -d dima_fix_error	#видалити гілку
+git branch
+	*main
+					|Branch Main           ->   version1 version2 version3 version4
+
+
+
+git chechout -b test
+git branch
+	*test		
+	mail
+echo "ddd" > ./index.html		|test	     ->   version1 version2 version3 version4
+git add .				|Branch main ->   version1 version2 version3 version4
+git commit -m "vesrionxxx"
+git checkout main
+git branch -D test	#видалити гілку яка має коміти та не привязана до грловної гілки main
+git branch
+	*main
+
+--------------------------------
+#повернення до попередньої версії
+
+git log
+	version4 <хеш коміту4> (HEAD -> main)
+	version3 <хеш коміту3>
+	version2 <хеш коміту2>
+	version1 <хеш коміту1>
+
+git checkout <хеш коміту version2>	#повернктися на два коміта назад
+git log
+	version2 <хеш коміту2> (HEAD)
+	vesrion1 <хеш коміту1>
+
+git cheсkout main	#повернутися до останього коміту
+git log
+	version4 <хеш коміту4> (HEAD -> main)
+	version3 <хеш коміту3>
+	version2 <хеш коміту2>
+	version1 <хеш коміту1>
+---------------------------
+#зміна останьо коміту
+cat ./index.html
+	ver4
+echo "version4.0" > ./index.html
+git commit --amend	#змінути назву коміну
+	verision 4.0 super new
+	...
+	esc -> :qw!
+git log
+----------------------------
+#повністю повернутися на version2 та видалити останні версії
+
+git reset --hard HEAD~2		#повернутися на 2 коміти назад
+git log
+	version2 <хеш коміту2> (HEAD -> main)
+	version1 <хеш коміту1>
+------------------------
+#видалити всі коміти та залишити один
+git reset --soft HEAD~1
+------------------------
+
+
+
+
+
