@@ -1,0 +1,290 @@
+
+#####Update the system
+sudo dnf update
+sudo dnf upgrade
+sudo dnf install epel-release git
+
+--------------------------------
+
+#####Install PHP
+dnf install php-{bcmath,common,curl,fpm,
+gd,intl,mbstring,mysqlnd,soap,xml,xsl,zip,cli,devel,
+pear,json,opcache,sodium} libsodium libsodium-devel
+
+nano /etc/php.ini
+		|max_input_vars = 5000
+systemctl enable --now php-fpm
+
+---------------------------------
+#####Install and Configure Nginx
+nano /etc/nginx/conf.d/moodle.conf
+server{
+ listen 80;
+ server_name moodle.com;
+ root /opt/moodle;
+ index index.php;
+
+ location / {
+ try_files $uri $uri/ /index.php?$query_string;
+ }
+
+ location ~ ^(.+\.php)(.*)$ {
+ fastcgi_split_path_info ^(.+\.php)(.*)$;
+ fastcgi_index index.php;
+ fastcgi_pass php-fpm;
+ include /etc/nginx/mime.types;
+ include fastcgi_params;
+ fastcgi_param PATH_INFO $fastcgi_path_info;
+ fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+ }
+}
+sudo nginx -t
+sudo systemctl enable --now nginx
+
+--------------------------------
+
+#####Install MariaDB Server
+sudo dnf install mariadb-server
+sudo systemctl enable --now mariadb
+mysql
+MariaDB [(none)]> CREATE DATABASE moodle DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+MariaDB [(none)]> CREATE USER 'moodle'@'localhost' IDENTIFIED BY 'm0d1fyth15';
+MariaDB [(none)]> GRANT ALL ON moodle.* TO 'moodle'@'localhost';
+MariaDB [(none)]> FLUSH PRIVILEGES;
+MariaDB [(none)]> \q
+
+-----------------------------------
+
+#####Install Moodle
+cd /opt
+sudo git clone https://github.com/moodle/moodle.git
+cd moodle/
+git branch -a
+
+#вибрати останю доступню гілку
+sudo git branch --track MOODLE_401_STABLE origin/MOODLE_401_STABLE
+sudo git checkout MOODLE_401_STABLE
+sudo git status
+
+sudo mkdir -p /opt/moodledata
+sudo chown -R apache. /opt/moodle*
+
+---------------------------------------
+######SElinux
+sestatus
+sudo nano /etc/selinux/config
+			|SELINUX=enforcing
+sudo reboot
+
+ls -Z /opt/moodle
+sudo semanage fcontext -a -t httpd_sys_content_t '/opt/moodle(/.*)?'
+sudo restorecon -R -v /opt/moodle
+
+#Дозвіл веб-сервера на доступ до бази даних
+sudo setsebool -P httpd_can_network_connect_db 1
+sudo setsebool -P httpd_can_network_connect 1
+
+#Доступ до завантажених файлів (uploads)
+sudo chcon -R -t httpd_sys_rw_content_t /opt/moodledata
+
+#Налаштування брандмауера
+sudo firewall-cmd --permanent --add-service=http
+sudo firewall-cmd --permanent --add-service=https
+sudo firewall-cmd --reload
+
+#Перевірка логів
+sudo cat /var/log/audit/audit.log | grep AVC
+-----------------------------------------
+crontab -u apache -e
+* * * * * /usr/bin/php /var/www/html/moodle/admin/cli/cron.php >/dev/null
+
+
+
+
+
+https://www.linuxcloudvps.com/blog/how-to-install-moodle-on-almalinux-9/
+
+
+
+
+
+
+
+sudo curl -LsS -O https://downloads.mariadb.com/MariaDB/mariadb_repo_setup
+sudo bash mariadb_repo_setup --mariadb-server-version=10.6
+
+
+
+ 1  mntui
+    2  nmtui
+    3  ping 8.8.8.8
+    4  dnf update -y
+    5  dnf upgrade -y
+    6  dnf install epel-release git
+    7  yum install nano
+    8  yum install nginx
+    9  systemctl start nginx
+   10  systemctl enable nginx
+   11  systemctl status nginx
+   12  yum install mariadb-server
+   13  systemctl start mariadb
+   14  systemctl enable mariadb
+   15  systemctl status mariadb
+   16  yum install php
+   17  wget https://download.moodle.org/download.php/direct/stable404/moodle-4.4.3.zip
+   18  yum install wget
+   19  wget https://download.moodle.org/download.php/direct/stable404/moodle-4.4.3.zip
+   20  ll
+   21  mv moodle-4.4.3.zip /var/www/html/
+   22  cd /var/www/html/
+   23  ll
+   24  yum insatall unzip
+   25  yum install unzip
+   26  unzip moodle-4.4.3.zip
+   27  ll
+   28  chown -R apache:apache moodle
+   29  l
+   30  ll
+   31  ip r
+   32  nano /etc/nginx/conf.d/moodle.conf
+   33  nginx -t
+   34  systemctl enable --now nginx
+   35  ip r
+   36  sudo firewall-cmd --permanent --add-service=http
+   37  sudo firewall-cmd --permanent --add-service=https
+   38  sudo firewall-cmd --reload
+   39  setenforce 0
+   40  nano /etc/nginx/nginx.conf
+   41  systemctl restart nginx
+   42  setenforce 0
+   43  nano /etc/nginx/conf.d/moodle.conf
+   44  ip r
+   45  ll
+   46  mkdir moodledata
+   47  chown apache:apache moodledata
+   48  ll
+   49  mysql -u root -p
+   50  yun install php-mysqli
+   51  yum install php-mysqli
+   52  yum install php-zip -y
+   53  yum install php-gd -y
+   54  yum install php-intl -y
+   55  yum install php-soap -y
+   56  yum install epel-release -y
+   57  curl -LsS -O https://downloads.mariadb.com/MariaBD/mariadb_repo_setup
+   58  bash mariadb_repo_setup --mariadb-server-version=10.6
+   59  sudo dnf install https://rpms.remirepo.net/enterprise/remi-release-9.rpm -y
+   60  sudo dnf module reset php -y
+   61  sudo dnf module enable php:remi-8.1 -y
+   62  sudo dnf install php -y
+   63  php -v
+   64  mariadb -v
+   65  mariadb --version
+   66  ip r
+   67  cd /home/dbedenko/
+   68  curl -LsS -O https://downloads.mariadb.com/MariaBD/mariadb_repo_setup
+   69  bash mariadb_repo_setup --mariadb-server-version=10.6
+   70  curl -LsS -O https://downloads.mariadb.com/MariaBD/mariadb_repo_setup
+   71  bash mariadb_repo_setup --mariadb-server-version=10.6bash mariadb_repo_setup --mariadb-server-version=10.6
+   72  sudo curl -LsS -O https://downloads.mariadb.com/MariaBD/mariadb_repo_setup
+   73  sudo bash mariadb_repo_setup --mariadb-server-version=10.6
+   74  ll
+   75  mariadb --version
+   76  [root@localhost dbedenko]# mariadb --version
+   77  mariadb  Ver 15.1 Distrib 10.5.22-MariaDB, for Linux (x86_64) using  EditLine wrapper
+   78  dnf remove mariadb-server
+   79  rm -rf /var/lib/mysql
+   80  rm -rf /etc/my.cnf
+   81  dnf install mariadb-server
+   82  mariadb --version
+   83  mysql -u root -p
+   84  dnf install mariadb-server
+   85  mysql -u root -p
+   86  [root@localhost dbedenko]# mysql -u root -p
+   87  Enter password:
+   88  ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/lib/mysql/mysql.sock' (2)
+   89  sudo systemctl status mariadb
+   90  sudo systemctl start mariadb
+   91  sudo systemctl enable mariadb
+   92  mysql -u root -p
+   93  pwd
+   94  mariadb --version
+   95  sudo curl -LsS -O https://downloads.mariadb.com/MariaDB/mariadb_repo_setup
+   96  sudo bash mariadb_repo_setup --mariadb-server-version=10.6
+   97  yum remove mariadb-server
+   98  yum install mariadb-server
+   99  mariadb --version
+  100  nano /etc/php.ini
+  101  systemctl enable --now php-fpm
+  102  systemctl start mariabd
+  103  systemctl start mariadb
+  104  systemctl enable mariadb
+  105  nano /etc/php.ini
+  106  systemctl enable --now php-fpm
+  107  init 6
+  108  systemctl status nginx
+  109  systemctl restart nginx
+  110  ip r
+  111  setenforce 0
+  112  pwd
+  113  ip r
+  114  mkdir ssl
+  115  cd ssl/
+  116  ll
+  117  exit
+  118  chmod +x makecert.sh
+  119  ./makecesrt.sh
+  120  pwd
+  121  cd ssl/
+  122  ll
+  123  cd /home/dbedenko/ssl/
+  124  ll
+  125  cd
+  126  ll
+  127  cd /home/dbedenko/ssl/
+  128  ./makecesrt.sh
+  129  nano makecert.sh
+  130  ./makecesrt.sh
+  131  pwd
+  132  ll
+  133  chmod +x makecert.sh
+  134  ll
+  135  ./makecesrt.sh
+  136  ./makecert.sh
+  137  ll
+  138  cat moodle.com_CA.pem >> moodle.com.crt
+  139  mkdir /etc/nginx/ssl
+  140  cp moodle.com.crt /etc/nginx/ssl/
+  141  cp moodle.com.key /etc/nginx/ssl/
+  142  nano /etc/nginx/conf.d/moodle.conf
+  143  nano /etc/nginx/conf.d/ssl.conf
+  144  nano /etc/nginx/nginx.conf
+  145  ngint -t
+  146  sudo nginx -t
+  147  systemctl restart nginx
+  148  nano /etc/nginx/nginx.conf
+  149  sudo nginx -t
+  150  systemctl restart nginx
+  151  nano /etc/nginx/nginx.conf
+  152  ll /var/www/html/
+  153  nano /etc/nginx/nginx.conf
+  154  nano /etc/nginx/conf.d/moodle.conf
+  155  nano /etc/nginx/conf.d/ssl.conf
+  156  systemctl restart nginx
+  157  nano /var/www/html/moodle/config.php
+  158  mkdir /home/dbedenko/.ssh
+  159  cd /home/dbedenko/.ssh/
+  160  nano AuthorizedKeysFile
+  161  nano /etc/ssh/sshd_config
+  162  sudo systemctl restart sshd
+  163  cd /home/dbedenko/.ssh/
+  164  ll
+  165  chown dbedenko:dbedenko AuthorizedKeysFile
+  166  ll
+  167  mv AuthorizedKeysFile authorized_keys
+  168  ll
+  169  sudo systemctl restart sshd
+  170  sestatus
+  171  history
+
+

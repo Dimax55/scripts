@@ -1,0 +1,65 @@
+https://www.youtube.com/watch?v=2tur2crhNOE&list=LL&index=3&t=214s
+
+nano /etc/zabbix/zabbix_agent.conf
+EnableRemoteCommands=1
+systemctl restart zabbix-agent.service
+systemctl status zabbix-agent.service
+
+cd /home/dima
+nano checkssl.sh
+_______________________________________________
+data=`echo | openssl s_client -servername $1 -connect $1:${2:-443} 2>/dev/null | openssl x509 -noout -enddate | sed -e 's#notAfter=##'`
+
+ssldate=`date -d "${data}" '+%s'`
+
+nowdate=`date '+%s'`
+
+diff="$((${ssldate}-${nowdate}))"
+
+echo $((${diff}/86400))
+________________________________________________
+chmod a+x checkssl.sh
+ll
+./checkssl.sh google.com
+
+
+#create items to cheack SSL certificates
+
+Data collectin => Hosts => items (Zabbix server) => create item =>
+
+	name: Check ssl site1.com
+	type: zabbix agent
+	key: system.run[/home/dima/checkssl.sh site1.com]
+	type of information:Numeric(float)
+	Update interval (for tist 5s but in life 1d)
+	add
+
+Monitoring => latest date => (look for our server "check  ssl") => zabbix server check ssl site1.com => graph
+
+#create trigger
+
+Data collectin => Hosts => triggers(zabbix server) => create trigger => 
+
+	|name: строк сертифікату сайта site1.com
+	|Function: last()-Last(more recent) T value
+	|severity: disaster
+	|expression: add
+			|item: Zabbix server: check ssl site1.com
+			|Result: "<"    "10"  (якщо менше 10 днів то відправляється alarm)
+	|Expression constructor
+	|OK event generation: Recovery expression
+		add
+			|item: Zabbix server: check ssl site1.com
+			|Result: ">"    "10"  (якщо більше 10 днів то проблема пропаде)
+
+	|add
+
+#create graghs
+
+Data collectin => Hosts => graphs(zabbix server) => create graph
+		
+	|name: строк дії сертифікату site1.com
+	|items: check ssl site1.com
+	|add
+
+Monitoring => Hosts => Graphs(Zabbix server) 
