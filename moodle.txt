@@ -287,4 +287,10 @@ sudo bash mariadb_repo_setup --mariadb-server-version=10.6
   170  sestatus
   171  history
 
+----------------------------------
+Оновлення config.php:
+Впевніться, що ви правильно вказали URL для HTTPS у файлі var/www/html/moodle/config.php Moodle. Перевірте рядок:
 
+$CFG->wwwroot   = 'https://moodle.com';
+Він повинен містити https://, щоб ресурси завантажувалися через HTTPS.
+-----------------------------------
