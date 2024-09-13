@@ -247,6 +247,7 @@ git reset --soft HEAD~1
 ------------------------
 
 
+git log --pretty=oneline   ###???
 
 
 
