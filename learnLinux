@@ -1,0 +1,424 @@
+SHELL  BASH
+
+змінні
+
+VALUE=25   створення локальної змінної  
+  
+TEST=”hello world ”   TEST=”hello world &VELUE”  -створити текстової локальної змінної
+
+echo &VALUE   printenv VALUE  звернення до змінної(вивести змінну)
+
+export VALUE=25   створення глобальної змінної
+
+printenv  переглянути змінні
+
+.bashrc   (run comands)     
+
+Читання файлу
+
+cat test.txt вивести на консоль все що знаходиться в файлі
+cat -b test.txt вивести з нумерацією 
+
+ nl test.txt   вивести що знаходиться в файлі з нумерацією рідків
+
+head test.txt  вивести в консоль перші 10 рядків
+head -15 test.txt   вивести перші 15 рядків
+man head
+
+tail test.txt   вивести в консоль останні 10 рядків
+tail -15 text.txt    
+man tail 
+
+less text.txt   дивитися файл вгору і вниз
+
+вводити виводити
+
+1 standard output
+2 standard error
+
+ls 1> test.txt   записати вівід в файл(перезаписати)
+ls 1» test.txt  добавити вивід в файл(дописати)
+
+ls /ertyu /ertt 1> output.txt 2> error.txt  якщо все добре то записуй в output.txt якщо ні то error.txt
+ls /ertyu /ertt 1» output.txt 2» error.txt    допиши якщо все добре в output.txt якщо ні error.txt
+
+
+ls 1&2 » output.txt      ls &» output.txt   допиши не важливо що буде
+
+cd Documents ; ls   обєднання команд
+
+cd Documents && ls    логічне та
+cd Documents || ls     логічне або
+
+
+history   подивитися історію команд
+
+mkdir test test2   створення деректорій( в даному випадку двох)
+mkdir -p test4/test5   створення деректорій і перекторії в цій деректорії
+
+rmdir видалити пусту деректорію
+rmdir -p test3   видалити деректорію
+
+rm -r test3  видалення всіх деректорій
+
+cp file.txt file_copy.txt   скопіювати з перейменуванням 
+cp file.txt ~/    скопіювати в домашній каталог
+
+cp -vR test test2   скопіювати деректорію  іншу деректорію
+
+mv test.txt  file.txt    перейменувати файл
+mv file.txt  ~/   перемістити в домашній каталог
+
+ls -i     подивитися спеціальний унікальний номер файлу(inode number)
+ls -l     подивитися права доступу
+
+
+ln -s test.txt soft-ling-test.txt   створення  soft link cbkrb на файл
+ln test2.txt hard-link-test2.txt      хард лінк на файл (однаковий inode number)
+
+
+текстові редактори
+
+nano hello.txt
+
+vim hello.txt    
+i   щоб увійти в редагування
+esc  щоб вийти з режиму редагування
+:w   записати файл
+:q   просто вийти
+:q!   якщо випадково редактував і просто хочу вийти без змін
+:qw  зберегти та вийти  
+
+пошук
+
+cut -d “,” -f3-4 staff.txt  показати 3 та 4 колонки розділені через кому
+sort сортувати
+uniq  забирає дублікати та залишає унікальні числа
+
+
+grep the file.txt     grep “ the “  file.txt   знайти конкретне слово
+egrep 
+
+
+
+знайти файли
+
+which echo cat mkdir   знаходження програми які необхідно на жорсткому диску
+whereis echo cat mkdir  те саме що і попереднє
+type echo cat mkdir  знаходить програми та відрізняє псевдоніни
+
+
+alias ll=’ls -lG’  псевдонім для команд які використовуються часто
+
+find    шукає файли по назві, розміну, по правам доступу
+find -name . “file.txt*” по назві, починається на file а закінчується не важливо
+find -type f   шукати звичайний файл
+find . -user master -size +100k -type f -name “file*” -empty(пустий файл)
+в кінці можна поставити команду xargs і побавити команду rm  щоб те що знаходилось можна було видалити
+
+зміна мета інформації для файлів
+
+stat file.txt  отримання повної інфи про файлі
+
+file file.txt  оприділяє тип нашого файлу
+
+wc  file.txt  вираховує кількість байтів слів або кількість строк
+
+du -ha Documents  виміряє в файлах та деректоріях зайняте суму місця в памяті
+
+touch змінити дату останнього заходу в нього 
+touch file.txt   створити пустий файл
+
+
+користувачі
+
+whoami  відображає теперішнього користувача
+sudo whoami   отримати ім’я супер користувача
+
+id  подивитися всіх користувачів та групи з індекатором
+
+who  подивитися хто підключений до сервера
+
+sudo chown root file.txt    змінити власника файлу
+
+sudo chown -Rv root file     змінити власника деректорії та файлів що а деректорії
+
+групи
+
+groups   подивитися всі групи куди включений мій користувач
+
+groups root   подивитися іншого користувача(його групи)
+
+sudo chgrp groupONE  file.txt    змінити групу для файлу
+sudo chgrp -Rv groupONE video   змінити групу для деректорії
+
+sudo chgrp -Rvn 20 video  змінити групу деректорію по id
+
+дозволи до файлів  user  group other 
+r read  w write x виконати
+
+sudo chmod +rwx file.txt    змінити права для всіх (користувач група інші)
+якщо треба змінити в когось конкретного то вказуємо u(uzer) g (group) o(other)
+sudo chmod go-x file.txt  відключаємо виконати для групи та інших
+sudo chmod o=w file3.txt  перезаписати що для інших лише читати
+
+
+sudo chmod -R 750 test   змінити для деректорії права доступу в восьмиричний степені
+
+мережі
+
+host google.com   шукає ip через dns
+ping google.com  чи доступний хост
+traceroude google.com   шлях та час по мережі щоб дойти до хоста
+
+ssh dima@192.168.0.105 
+shh dima@192.168.0.105 “ls -a”  виконати команди не заходячи на сервер
+ssh dima@192.168.31.115 cat file1.txt
+
+
+
+
+scp   копіювання файлів між окремими машинами(пк та сервер)
+
+scp /home/master/ITEfolder1/doc1.txt dima@192.168.0.105:/home/dima   скопіювати документ з ПК на сервер в папку користувача
+ssh -P 22 dima@192.168.31.115 ls -l   переглянути скопійоване на сервер
+
+scp dima@192.168.31.115:/home/dima/file1.txt /home/master/ITEfolder1/came_back.txt    скопіювати з сервера на ПК та відразу змінити назву файлу
+ls ITEfolder1 переглянути скопійоване
+
+sftp  передавати файли з одної машини на іншу в любому порядку 
+(інтерактивно взаємодіяти між двома машинами одночасно)
+sftp> put -R /home/master/ITEfolder1    скопіювати з ПК на сервер файл( -R ) через sftp
+
+створити аліас  ssh   для вервера (віддаленої машини)
+cd .ssh  зайти в папку  ssh  (там де лежать ключи по ssh)
+touch config  створити папку
+https://www.ssh.com/academy/ssh/config#listing-of-client-configuration-options
+сайт з дукументацією по налаштуванню ssh config
+nano config зайти в файл 
+Host ubuntu-ssh
+HostName 192.168.31.115
+Port 22
+User Dima       записати дані
+IdentityFile ~/.ssh/id_rsa
+
+ssh ubuntu-ssh   зайти по ssh на сервер по створеному аліасу
+ключі входу 
+ssh-keygen   згенерувати пару ключів
+створитися два ключа id_rsa  id_rsa.pub
+scp /home/master/.ssh/id_rsa.pub dima@192.168.31.115:/home/dima/.ssh/authorized_keys 
+перініс паблік ключ на машину та перейменував
+chmod 640 homedima/.ssh/authorized_keys    надав права
+
+
+
+
+ssh ubuntu-ssh ls -l  переглянути файли
+
+
+
+
+bash скріпти
+touch start-app  створити файл
+nano start-app   зайти у файл
+               #!/bin/bash
+                echo "hello, aplecation is starting...."
+chmod +x start-app     надати права для всіх
+./start-app  запустити програму(bash скріпт)
+export PATH=$PATH:$PWD     
+
+https://google.github.io/styleguide/shellguide.html     правила писання скриптів
+
+
+
+ приклад створення bash скрипта
+
+nano file.sh
+текст в середині файлу
+source file.sh   запустити баш
+cdmod +x file.sh   надати права для езекют
+
+
+
+#!/bin/bash
+
+#вивести текст на екран(в термінал)
+echo "hello, aplecation is starting...."
+
+#створити текстову змінну
+default_app_name="Spring"
+
+#вивести текст із змінною разом на екран
+echo "hello it is value ${default_app_name}!"
+
+#створити числову змінну
+value=25
+
+#створити масив чисел
+#      0 1  2  3   4    5
+array=(1 5 22 190 1290 2050)
+
+#вивести другий індекс на екран
+echo "&{array[2]}"
+#вивести  весь масив
+echo "${array[@]}"
+#вивести розмір масиву (кількість індексів)
+echo "${#array[@]}"
+#змінити значення другого індексу
+array[2]=222
+echo "${array[@]}"
+#додати в кінець масиву значення
+array+=(111 222)
+
+echo "${array[@]}"
+
+echo "enter your namber"
+
+#ввести інформацію та створити змінну
+read app_name
+echo "new name is ${app_name}!"
+echo "${array[@]}"
+
+
+____________________________________________________________________
+ LINUX SERVER
+
+для підєднання через windows необхідно програми putty
+putty з   linux ssh-keygen не працює
+тому треба щоб ключ був згенерований самою програмою  putty
+коли встановлювали програму PuTTY то також встановилась програма PuTTYgen 
+згенерувати ключ — також можна створити допоміжний пароль на ключ
+save private key 
+також category — ssh — Auth- credentials- підєднати приватний ключ
+далі вертаємося в  session — save session — назва (sessionНМД221) - save
+
+
+синхронізація часу
+dima@server:~$ date
+dima@server:~$ sudo timedatectl set-timezone Europe/Kiev 
+dima@server:~$ timedatectl 
+
+ зміна назви сервера  (можна робити тільки на початку роботи, до налаштувань dns)
+sudo nano etc/hostname 
+sudo nano etc/hosts
+127.0.1.1	master-HP
+hostnamectl  або reboot
+
+
+
+типи шифрування:
+синхроне (між хостами шифрується інфа одними і тим ж ключем )
+асинхроне(використовуються пара ключів   публічний та приватний )
+хешування ()
+
+ssh-keygen 
+вставити публічний ключ в сервер в папку   authorized_keys
+тепер треба редагувати файл який відповідає за ssh
+dima@server1:~/.ssh$ sudo nano /etc/ssh/sshd_config
+для того щоб ключ почав працювати треба розкоментувати :
+#PubkeyAuthentication yes
+#ListenAddress 0.0.0.0 це пункт з яких адрес можна конектитись до серверу
+далі коли виконується доступ по ключам то рекомендується вимкнути доступ по логіну та паролю
+в лінук завжди після налаштувань треба робити рестарт 
+dima@server1:~/.ssh$ sudo service ssh restart 
+
+бажано знінити порт 22 на інший (наприклад 45000)
+ коли ми використовуємо доступ по ключам ми маємо відключити доступ по логіну і паролю ( виконати дія після того як переконалися що вхід через ключ працює)
+dima@server1:~/.ssh$ sudo nano /etc/ssh/sshd_config.d/50-cloud-init.conf 
+замість yes написати no
+
+dima@server1:~/.ssh$ sudo service ssh restart (перезапуск ssh сервіса)
+dima@server1:~$ service ssh status ( перевірка статусу ssh)
+
+
+master@master-HP:~/.ssh$ sudo ssh -i /home/master/.ssh/id_rsa dima@192.168.31.91 
+master@master-HP:~/.ssh$ sudo ssh -i /home/master/.ssh/id_rsa dima@192.168.31.91 -p 45000
+_________________________________________________________________
+
+DHCP server
+
+sudo apt update
+sudo apt install isc-dhcp-server
+ip a наш мережевий адаптор має назву ens33
+sudo nano etc/default/isc-dhcp-server
+в полі INTERFACESv4=”” вписати назву порта  “ens33” 
+sudo nano etc/dhcp/dhcpd.conf
+
+налаштувати поля:
+subnet
+range
+та різні options
+також розкоментувати рядок authoritative;
+
+
+sudo /etc/init.d/isc-dhcp-server restart
+less /var/log/syslog
+
+_________________________________________________________________
+ip address
+dima@crafana:~$ nano /etc/netplan/
+network:                                           -0
+  ethernets:                                       -2
+    enp0s3:                                       -4
+      addresses:                                 -6
+      - 10.7.135.15/16                       -6 (-1)
+      gateway4: 10.7.0.101               -6
+      nameservers:                            -6
+        addresses:                              -8
+        - 8.8.8.8                                 -8 (-1 )
+  version: 2                                    -2
+
+далі команда:
+sudo netplan apply
+
+_____________________________________________________________
+
+WEB server 
+-видача веб сторінок
+-видавати файли
+-база даних
+-потоковий сервер передачі даних (youtube)
+-тощо
+
+сайти пишуть через php мови, також треба система управління базами даних
+для нормального функціонуання потрібно linux + apache2(або nginx)+MySQL+PHP
+частіше nginx працює як проксі сервер(запити приходяьна нього приховує які сервери знаходяться за ним та задає питання вже конкретним серверам) 
+перевірка на унікальність нік нейму відбувається на стороні клієнта через javascript
+на стороні сервера працює node.js (змінюючі фони, тощо)
+
+
+sudo apt update
+sudo apt install apache2
+перевірити чи веб сервер працює в браузері або 
+curl 192.168.31.112  		показує html код сайту
+перевірити чи працює порт 
+sudo atp install net-tools
+sudo netstat -utanap
+sudo service apache2 status 
+
+cd /etc /apache2  	 зберігаються конфігураційні файли apache
+
+mods-enabled/		знаходяться модулі яку будуть загружатися з apache
+conf-enabled/ 		знаходяться допоміжні конфіги(кодування, реалізація мов програму)
+sites-enabled/		зберігаються налаштування конфігурації apache для конкретного сайту
+cd /var /www 		знаходяться самі сайти (index.html)
+
+
+для того щоб працювало більше одного сайта треба налаштувати віртуальні сайти
+
+cd /etc /apache2 /site-avalible/ 	 знаходяться дефолтні налаштування сайта(краще їх не редагувати а створити інший файл еонфігурації)
+sudo cp 000-default.conf ./site2.loc.conf
+nano site2.loc.conf
+розкоментувати рядок та записати  назву сайту    #ServerName site1.com
+знінити рядок там де знаходиться index.html сайту DocumentRoot /var/www/site1/
+змінити радок як бубуть називатися логи ErrorLog ${APACHE_LOG_DIR}/site1.error.log
+        CustomLog ${APACHE_LOG_DIR}/site1.access.log combined
+
+sudo mkdir /var /www /site1 /
+sudo nano /var /www/ site1 /index.html
+<h1>welcome to site1 </h1>
+cd /etc /apache2 /site-avaliable /
+sudo a2ensite site1.loc.conf 		для увімкнення сайту який створили
+sudo service apache2 reload		для перезавантаження сервера apache
+
+на реальній машині зайти в файл hosts та додати рядок “192.168.31.112 	site1.com”
