@@ -1,0 +1,71 @@
+
+#create RAID1 and RAID10
+F2 or Del
+BIOS
+-system setup
+--Device Settings
+---Integrated RAID Controller 1:Dell PERC <PERC H730P Mini> Configuration Utility
+----Continue Normal Boot
+
+________________________________
+KVM: install
+
+dnf upgate
+dnf -y install qume-kvm libvirt virt-install
+
+#config modules are loaded
+lsmod | grep kvm
+sysytemctl enable --now libvirtd
+_________________________________
+#add bridge
+nmcli connection add type bridge autoconnect yes con-name br0 ifname br0
+
+#set IP addressesfor [br0]
+nmcli connection modify br0 ipv4.addresses 10.0.25.24/24 ipv4.method manual
+
+#set gateway for [br0]
+nmcli commection modify br0 ipv4.gateway 10.0.25.254
+
+#set DNS search base for [br0]
+nmcli connection modify br0 ipv4.dns 8.8.8.8
+
+#remore the current interface
+nmcli connection del enp1s0
+
+#add the removed interface again as a member of [br0]
+nmcli cinnection add type bridge-slave autoconnect yes con-name enp1s0 ifname enp1s0 master br0
+
+reboot
+ip a
+___________________________________
+#add new disk and mount
+
+df -h
+
+fdisk /dev/sh_.. -> n -> enter -> w
+df -Th
+mkdir /hdd
+ll
+lsblk
+mkfs.xfs /dev/sd_.. ###(sdb1)
+
+#create directory for mount point
+
+blkid
+blkid | grep sd_.. >> /etc/fstab
+
+#and edit fstab file
+nano /etc/fstab
+
+mount -a
+
+#if blkid sh_.. "xfs"
+mount /dev/sh_../dir
+_________________________________
+
+
+
+
+
+
+_____________________________

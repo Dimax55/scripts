@@ -1,0 +1,127 @@
+
+#basic setup mikrotik
+
+bridge --> + --> 
+		| name: bridge1
+bridge --> Ports --> +
+		      | add all port(ether2,3,4,5) without WAN(ether1)
+		      | Bridge: bridge1
+
+#create ip bridge
+ip --> Addresses 
+		| address: 10.0.25.1/24
+		| interface: bridge1
+
+
+# static setup address from provider
+ip --> Addresses 
+		| address: 10.0.25.60/24
+		| interface: ether1
+
+ip --> DHCP client --> + 
+			| interface: ether1
+
+#config gateway
+ip --> routes --> +
+		   | Gateway: 10.0.25.254
+
+ping 8.8.8.8
+
+ip --> DNS --> 
+		| servers: 8.8.8.8
+		| turn on "Allow Remore Requests"
+
+ping google.com
+
+# create DHCP
+
+ip --> DHCP Server --> DHCP
+			   | DHCP setup
+			   		| bridge1
+			   		| default setup
+
+#config NAT
+
+ip --> firewall --> NAT --> +
+			     | Out. interface: ether1
+			     Action -->
+			     		|Action: masquerate
+
+#check all conects clients
+
+ip --> DHCP server --> Leases
+____________________________________________________________
+#create VLANs
+#chack ping between 2 mikrotiks
+#
+bridge --> VLANs --> + --> 
+			|Bridge:bridge1
+			|VLAN IDs:10
+			|Targged:bridge1
+			|Untagged:ether4
+			|	  ether5
+
+
+Interfaces -->  VLAN  -->  + -->
+				|Name:Vlan10
+				|VLAN ID:10
+				|Interface:bridge1
+				
+				
+ip  --> addresses --> + -->  
+			  |address:10.10.10.1/24
+			  |interface: Vlan10
+			  
+			  
+ip --> DHCP Server --> DHCP --> DHCP setup -->
+					      |default setup
+					      
+					      
+ip -->  firewall -->  Filter Rules --> +
+					|Protocol:icmp
+					|In.interface:bridge1
+					|Out.interface:Vlan10
+					Action -->
+						  |Action:drop
+				
+______________________________________________________________
+
+# setup VPN punnel
+
+#mikrotik-1 create L2TP Server
+
+PPP  -->  Interface
+		   | L2TP server
+		   | turn on "Enabled"
+		   | Default Profile: l2tp
+		   | turn on "mschap2"
+		   | Use Ipsec: required
+		   | IPsec Secret: qwerty
+PPP --> Secrets 
+		| creat user
+		| Name: user1
+		| qwerty
+		| Profile: l2tp
+		| Local Address: 10.10.15.1
+		| Remore Address: 10.10.15.2
+		
+#mikrotik-2 create L2TP Client
+
+PPP --> interface --> add "L2TP Client"
+					| Connect to: <ip address L2TP server 10.0.25.60>
+					| User: user1
+					| Password: qwerty
+					| turn on "Use IPsec"
+					| Allow: mschap2
+		
+ping 10.10.15.1
+____________________________________________________________
+		
+		
+		
+ 
+
+
+					      
+
+

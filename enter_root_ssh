@@ -1,0 +1,35 @@
+# Заборонити вхід на root
+
+- /etc/ ssh/sshd_config
+- PermitRootLogin → no (по паролях)
+- PasswordAuthentication → no (по SSH)
+- sudo systemctl restart sshd
+
+> **`PermitRootLogin`**
+> 
+> 
+> Цей параметр визначає, чи дозволяється користувачу root входити в систему через SSH.
+> 
+> - `PermitRootLogin yes`: дозволяє користувачу root входити в систему через SSH.
+> - `PermitRootLogin no`: забороняє користувачу root входити в систему через SSH.
+> - `PermitRootLogin prohibit-password`: дозволяє root-логін лише з використанням ключів SSH (паролі заборонені).
+> - `PermitRootLogin without-password`: це те саме, що і `prohibit-password`, але у старих версіях OpenSSH.
+> 
+> **Пояснення:**
+> 
+> - Якщо `PermitRootLogin` ввімкнений (`yes`), користувач root може входити в систему через SSH, використовуючи пароль або ключ SSH.
+> - Якщо `PermitRootLogin` вимкнений (`no`), користувач root не зможе увійти через SSH, навіть якщо знає пароль або має ключ SSH.
+> - Використання значення `prohibit-password` або `without-password` дозволяє підвищити безпеку, забороняючи root-логін з використанням пароля, але дозволяючи вхід з використанням ключів SSH.
+
+> **`PasswordAuthentication`**
+> 
+> 
+> Цей параметр визначає, чи дозволяти аутентифікацію через SSH за допомогою пароля.
+> 
+> - `PasswordAuthentication yes`: дозволяє аутентифікацію за допомогою пароля.
+> - `PasswordAuthentication no`: забороняє аутентифікацію за допомогою пароля.
+> 
+> **Пояснення:**
+> 
+> - Якщо `PasswordAuthentication` ввімкнений (`yes`), користувачі можуть входити в систему через SSH, використовуючи пароль.
+> - Якщо `PasswordAuthentication` вимкнений (`no`), користувачі не зможуть увійти через SSH за допомогою пароля, а можуть використовувати лише інші методи аутентифікації, такі як ключі SSH.

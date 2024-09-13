@@ -1,0 +1,36 @@
+
+#create/delete cluster
+minikube start
+minikube stop 
+minikube delete
+
+
+#enter in kluster
+minicube ssh
+
+minikube start --cpus=4 --memory=8gb --disk-size=15gb
+
+minikube status
+minikube ip
+minikube start --cpus=3 --memory=2gb --disk-size=5gb -p=nmd221 --vm-driver=virtualbox
+
+kubectl get nodes
+kubectl get pods
+kubeclt get service
+kubectl get componentstatus
+kubectl cluster-info
+
+kubectl run site --image=ubuntu/apache2
+kubectl run site2 --image=ubuntu/apache2 --port=80
+kubectl port-forward site2 8090:80
+nano service.yaml
+kubectl create -f service.yaml
+
+kubectl get svc site2
+
+kubectl apply -f service.yaml
+
+kubectl apply -f ports-service.yaml
+kubuctl port-forward <pod_name> 8000:31531
+
+

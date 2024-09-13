@@ -1,0 +1,107 @@
+
+
+
+https://www.youtube.com/watch?v=ijOTemn1QjE
+
+﻿1. Make Ubuntu Installer
+
+2. Install Installer
+
+3. Install OCS Inventory
+
+ssh username@ip
+
+sudo apt update && sudo apt upgrade -y
+
+3.1 Install the LAMP Stack
+sudo apt install apache2 libapache2-mod-perl2 libapache2-mod-perl2-dev libapache-dbi-perl libapache-db-perl libapache2-mod-php libarchive-zip-perl mariadb-server composer php-mbstring php-xml php-mysql php-zip php-pclzip php-gd php-soap php-curl php-json
+
+3.2 Install Perl packages
+sudo apt install git curl wget make cmake gcc make -y
+
+sudo apt -y install perl libxml-simple-perl libcompress-zlib-perl libdbi-perl libdbd-mysql-perl libnet-ip-perl libsoap-lite-perl libio-compress-perl libapache-dbi-perl  libapache2-mod-perl2 libapache2-mod-perl2-dev
+
+sudo apt -y install php-mbstring php-xml php-mysql php-zip php-pclzip php-gd php-soap php-curl php-json libapache2-mod-perl2 libapache-dbi-perl libapache-db-perl libapache2-mod-php libarchive-zip-perl mariadb-client
+
+
+
+#Enable Apache2
+sudo systemctl is-enabled apache2
+sudo systemctl status apache2
+
+#Enable MariaDB
+sudo systemctl is-enabled mariadb
+sudo systemctl status mariadb
+
+#PHP
+php -v
+
+sudo -u www-data composer -v
+
+3.3 Install some Perl modules
+	sudo perl -MCPAN -e 'install Apache2::SOAP'
+	sudo perl -MCPAN -e 'install XML::Entities'
+	sudo perl -MCPAN -e 'install Net::IP'
+	sudo perl -MCPAN -e 'install Apache::DBI'
+	sudo perl -MCPAN -e 'install Mojolicious'
+	sudo perl -MCPAN -e 'install Switch'
+	sudo perl -MCPAN -e 'install Plack::Handler'
+
+3.4 Create Database
+sudo mysql -uroot -p
+CREATE DATABASE ocsdb;
+CREATE USER ocsuser@localhost IDENTIFIED BY 'ocsPWD';
+GRANT ALL ON ocsdb.* TO ocsuser@localhost;
+FLUSH PRIVILEGES;
+exit
+
+3.5 Change Timezone
+sudo nano /etc/php/8.1/apache2/php.ini
+
+memory_limit = 512M
+post_max_size = 100M
+upload_max_filesize = 100M
+max_execution_time = 360
+date.timezone = Europe/Stockholm
+
+sudo systemctl restart apache2
+
+3.6 Install OCS Inventory
+sudo wget https://github.com/OCSInventory-NG/OCSInventory-ocsreports/releases/download/2.10.0/OCSNG_UNIX_SERVER-2.10.0.tar.gz
+sudo tar -xvf OCSNG_UNIX_SERVER-2.10.0.tar.gz
+cd OCSNG_UNIX_SERVER-2.10.0
+sudo nano setup.sh
+# Database server credentials
+DB_SERVER_USER="ocsuser"
+DB_SERVER_PWD="ocsPWD"
+
+sudo ./setup.sh
+
+#Applying Apache2 Configurations for OCS Inventory Server
+sudo ln -s /etc/apache2/conf-available/ocsinventory-reports.conf /etc/apache2/conf-enabled/ocsinventory-reports.conf
+sudo ln -s /etc/apache2/conf-available/z-ocsinventory-server.conf /etc/apache2/conf-enabled/z-ocsinventory-server.conf
+sudo ln -s /etc/apache2/conf-available/zz-ocsinventory-restapi.conf /etc/apache2/conf-enabled/zz-ocsinventory-restapi.conf
+
+cd /etc/apache2/conf-enabled/
+sudo nano z-ocsinventory-server.conf
+sudo nano zz-ocsinventory-restapi.conf
+sudo chown -R www-data:www-data /var/lib/ocsinventory-reports/
+sudo systemctl restart apache2
+
+5. Setup OCS via Web Interface
+http://192.168.1.50/ocsreports/index.php
+
+cd /usr/share/ocsinventory-reports/ocsreports/
+sudo mv install.php install.php.bak
+
+6. Add Windows PC to OCS
+
+
+
+
+
+
+
+
+
+

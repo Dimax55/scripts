@@ -1,0 +1,35 @@
+
+
+#download veeam agent for linux from site(veeam-release-e*****)
+
+#install veeam agent for linux
+dnf update
+wget https://.........
+
+rmp -ivh ./veeam-release*
+yum check-update
+
+yum install veeam
+veeam
+#configere job
+
+####next in wendows veeam server
+система -> мережа й інтернет -> центр мереж і спільний доступ -> змінити додаткові параметри спільного доступу -> все увімккнути -> готово
+далі
+С:\Bachup\Desctop-r9krd_dima\localhost.localdomain BackupJob1->властивості -> спільний доступ -> дозволити спільний доступ -> готово
+
+https://repository.veeam.com/backup/linux/veeam-recovery-media/x64/veeam-recovery-amd64-6.0.0.iso
+
+#create new VM on Hyper-V
+#chack iso veeam-recovery-amd64-6.0.0.iso
+
+proceed without ssh
+#configure network in menu
+
+Restore voalumes
+Add shared folder..
+SMB 10.0.25.21 localhost.localdomain BackupJob1 username password
+
+
+
+

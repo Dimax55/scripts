@@ -1,0 +1,10 @@
+# Shh keygen
+
+- Згенерувати ключ у PuttyGen
+- Ключ приватний стоврити та зберегти на ПК. Публічний ключ скопіювати.
+- Зайти у Putty
+- Далі зайти у .ssh (cd .ssh) там стоворити (touch authorized_keys) та вставити туди ключ
+- vi /etc/ssh/sshd_config → AuthorizedKeysFile (тут ми можемо подивитися на точну назву файлу)
+- У Putty заходимо у Session → Connection → SSH → Auth → Credentials i вставити private key
+- Session → ввести id → зберегти name
+- <name> → Load → change port →Open
