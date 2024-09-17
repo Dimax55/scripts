@@ -1,0 +1,17 @@
+EC2 - Elastic Compute Cloud
+
+types of instances(servers):
+-Instances	(On demand)
+-Instance Types
+-Launch Templates
+-Spot Requests
+-Savings Plans
+-Reserved Instances	(rent on 1-3 year)
+-Dedicated Hosts  	(повністю матеріальний сервер який налажить тільки вам)
+-Capacity Reservations
+
+типи серверів:
+T - general purpose (загального назначення)
+C - compute optimized (більший процесор)
+G,P - GPU optimized (рендерінг)
+

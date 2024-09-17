@@ -1,0 +1,34 @@
+
+
+
+
+
+
+Amason S3 > Buckets > backet.name.test.123 > folder1/ > text.txt
+
+вибрати Versions
+enable Bucker versioning (буде зберігатися всі зміненні версії файла)
+
+----------------------
+
+#lifecycle (налаштувати графік коли стирати  файли )
+
+Amazon S3 > Buckets > backet.name.test.123 
+вибрати Management
+=> create lifecycle rule
+==>name
+===>Lifecycle rule actious:
+ Move current version of ..
+====>Transition current versions of ob:
+Standard-IA    30 (перевісти файл в інший фармат через 30)
+Inteligent_Tiering   60 
+...
+
+----------------------
+#Static website hosting
+
+Amazon S3 > Backets > виділити папку 
+вибрати Properties > Static website hosting >
+> enable > index.html та error.html > seve changes
+???make public using files???
+
