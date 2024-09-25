@@ -1,5 +1,11 @@
 EC2 - Elastic Compute Cloud
 
+Instance - віртуальний сервер
+Volume - дмиск до сервера (SSD/HDD)
+Snapshot - резервна копія диску(volume)
+AMI - резервна копія instance (золота копія)(ami можна створювати сомому або брати готові)
+(ami-04cdc91e49cb06165 ubuntu24.04)
+
 types of instances(servers):
 -Instances	(On demand)
 -Instance Types
@@ -13,5 +19,21 @@ types of instances(servers):
 типи серверів:
 T - general purpose (загального назначення)
 C - compute optimized (більший процесор)
-G,P - GPU optimized (рендерінг)
+G,P - GPU optimized ( мають відеокарти,для рендерінг)
+X,R - RAM Memory Optimized
+D,I - storege optimized
 
+----
+EBS - Elastic Block Store  (писки пям'яті)
+типи дисків:
+-General Purpose SSD (gp3)
+-General Purpose SSD (gp2) up to 10.000 iops
+-Provisioned IOPS (io2)
+-Provisioned IOPS (io1) up to 20.000 iops
+-Magnetic 
+other:(не можуть бути загружаюемеми дисками)
+-throughput Optimized HDD (ST1)
+-cold HHD(sc1)
+----
+#інформація про EC2 instance
+curl http://169.254.169.254/latest/meta-data/
