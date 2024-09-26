@@ -72,8 +72,8 @@ Owner = "test user1"
 
 
 
-
-#shell скрипт виносино в окремий файл
+#оптимізація 1.0
+#тепер shell скрипт виносино в окремий файл
 
 touch user_data.sh
 	#!/bin/bash
@@ -92,16 +92,110 @@ terraform apply
 (зупинеться, видалиться та створиться інший)
 
 
+----------------------------------------------
+#оптимізвція 2.0
+
+Templatefile
+
+динамічні файли - це файл в який ми напсилаємо змінні і файл генерується в залежності
+від наших змінних
+
+sudo mv user_data.sh user_data.sh.tpl (розширення для template file)
+
+# полі user_data = templatefile("./user_data.sh.tpl",{     #знінюємо файл , додаємо знімінні
+	f_name = "Bob",
+	l_name = "Smith",
+	names = ["bob", "bob2", "den3"]
+	})
+
+nano user_data.sh.tpl
+
+	#!/bin/bash
+	yum -y update
+	yum -y install httpd
+
+	myip='curl http://169.254.169.254/latest/meta-data/local-ipv4'
+
+	cat <<EOF > /var/www/html/index.html
+	<html>
+	<h2>Build by power of Terraform <font color='red'> hello </font></h2><br>
+	Owner ${f_name} ${l_name} <br>
+	#виводимо змінні
+
+	%{ for x in names  ~}
+	Hello to ${x} from ${f_name}<br>
+	%{ endfor ~}
+	#виводимо змініні циклом
+
+	</html>
+	EOF
+
+	sudo service httpd start
+	chkconfig httpd on
+
+
+terraform plan
+terraform apple
+
+-------------------------
+тестування коду без підняття ресурсів
+( що видасть файл з котом)
+
+terraform console
+
+#тестуємо файл
+> file("./user_data.sh.tpl") #видає всі що там відбудиться
+
+#тестуємо функцію  без деплойменту
+> templatefile("./user_data.sh.tpl",{f_name = "Bob",l_name = "Smith",names = ["bob", "bob2", "den3"]})
+
+----------------------------------------------
+Динамічні блоки коду - dynamic
+
+ 
+
+. . .
+
+#удосконалюємо код, змінюємо sycurity group
 
 
 
+resource "aws_security_group" "my_webserver" {
+  name        = "WebServer Security Group"
+  description = "my first securityGroup"
+
+  dynamic "ingress" {
+
+	for_each = ["80", "443", "8080", "1541"]   #цикл пройдеться та встаить порти
 
 
+	content {
+	 from_port = ingress.value    #встанляються номера портів через цикл
+	 to_port = ingress.value
+	 protocol = "tcp"
+	 cidr_blocks = ["0.0.0.0/0"]
+		}
 
 
+	egres {		#те що йде від сервера
+	 from_port = 0
+	 to_port = 0
+	 protocol = "-1"
+	 cidr_blocks = ["0.0.0.0/0"]
+		}
 
+        ingress {	#відкрити ssh в мережі  VPC
+	 from_port = 22
+	 to_port = 22
+	 protocol = "tcp"
+	 cidr_blocks = ["10.10.10.0/16"]
+	}
 
+	}
+}
 
+. . .
 
-
+terraform plan
+terraform apply
 
