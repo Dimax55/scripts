@@ -1,0 +1,61 @@
+
+
+#порядок (по черзі) створення ресурсів (depend)
+
+ provider "aws" {
+	region = "eu-central-1"
+}
+
+resource "aws_instance" "my_server_web" {
+	ami = ""
+	instance_type = "t3.micro"
+	vpc_security_group_ids = [aws_security_group.my_webserver.id]
+	tags = {
+		name = "Server-Web"
+		}
+
+	depends_on = [aws_instance.my_server_db, aws_instance.my_server_app]
+#залежить від сервера бази даних та серверу дадатка, створититься після створення server_db та server_app
+
+}
+
+resource "aws_instance" "my_server_app" {
+	ami = ""
+	instance_type = "t3.micro"
+	vpc_security_group_ids = [aws_security_group.my_webserver.id]
+	tags = {
+		name = "Server-application"
+		}
+
+
+	depends_on = [aws_instance.my_server_db]
+#залежить від сервера бази даних, створититься після створення server_db
+
+}
+
+resource "aws_instance" "my_server_db" {
+	ami = ""
+	instance_type = "t3.micro"
+	vpc_security_group_ids = [aws_security_group.my_webserver.id]
+	tags = {
+		name = "Server-database"
+		}
+	
+}
+
+
+
+resorce "aws_security_group" "my_webserver" {
+	name = "My security group"
+
+	dynamic "ingress" {
+		for_each = ["80", "433", "22"]
+
+			content {
+				from_port = ingress.value
+				to_port = ingress.value
+				protocol = tcp
+				cidr_blocks = [0.0.0.0/0]
+				}
+			}
+}

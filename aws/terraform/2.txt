@@ -57,7 +57,7 @@ resource "aws_security_group" "my_webserver" {
 #terraform apply  (yes)
 #Apply complete! Resources: 2 added,0 changed,0 destroyed.
 
-
+-----------------------------
 #добавляємо тег в resorce "aws_instance" 
 tags = {
 Name = "Web server build by terraform"
@@ -68,8 +68,9 @@ Owner = "test user1"
  #Apply complete! Resources: 0 added,1 changed,0 destroyed.
 
 
-#terraform destroy
 
+#terraform destroy
+------------------------------------------
 
 
 #оптимізація 1.0
@@ -89,7 +90,7 @@ terraform plan
 terraform apply
 
 !!!! якщо знінювати user_data.sh інстанс буде видаляться і ствроюватися інший
-(зупинеться, видалиться та створиться інший)
+(зупинеться, видалиться та створиться іншого)
 
 
 ----------------------------------------------
@@ -152,14 +153,13 @@ terraform console
 ----------------------------------------------
 Динамічні блоки коду - dynamic
 
- 
 
-. . .
+
+provider "aws" { . . . }
+resource "aws_eip" "my_statis_ip { . . . }
+resource "aws_instance" "my_webserver" { . . . }
 
 #удосконалюємо код, змінюємо sycurity group
-
-
-
 resource "aws_security_group" "my_webserver" {
   name        = "WebServer Security Group"
   description = "my first securityGroup"
@@ -198,4 +198,150 @@ resource "aws_security_group" "my_webserver" {
 
 terraform plan
 terraform apply
+
+--------------------------
+LifeCycle  # при змінах коду буде вибивати помилку
+	   # сервнер не буде зупиняться та вимикатися
+
+
+
+provider "aws" { . . . }
+
+resource "aws_instance" "my_webserver" { 
+ 
+ .  .  .
+
+	lifecycle {
+		prevent_destroy = true	#щоб випадково по помилці не вимкнути важливий сервер(database server)
+	}
+}
+
+  .  .  .
+
+--------------------------
+#також можна створювати lifecycle  на інші зміни
+
+	lifecycle {
+		ignore_changes = ["ami", "user_data"]	#ігнорує зміни зі зміненням ami або файла .sh
+	}
+
+
+
+------------------------------
+#приєднання Elastic IPs
+
+
+
+
+provider "aws" { . . . }
+
+resource "aws_eip" "my_statis_ip { . . . }
+
+resource "aws_instance" "my_webserver" {
+	ami = "ami-hioihvwhiov" 	#Amazon Linux AMI
+	instance_type = "t3.micro"
+	user_data = templatefile("./user_data.sh.tpl")
+	f_name = "bob"
+	l_name = "smith"
+	tags = {
+		name = "Web Server nuild ny terraform"
+		owner = "user_test1"
+		}
+}
+resource "aws_security_group" "my_webserver" { . . . }
+
+----------------------------
+#робиио майже zero down time
+#створюємо новий сервер а потім переносимо дані на нього зі старого та видаляємо старий
+
+provider "aws" { . . . }
+resource "aws_eip" "my_statis_ip" { . . . }
+
+resource "aws_instance" "my_webserver" {
+	ami = "ami-hioihvwhiov" 	#Amazon Linux AMI
+	instance_type = "t3.micro"
+	user_data = templatefile("./user_data.sh.tpl")
+	f_name = "bob"
+	l_name = "smith"
+	tags = {
+		name = "Web Server nuild ny terraform"
+		owner = "user_test1"
+		}
+	
+	lifecycle {
+		create_before_destroy = true	#створити перед тим як видаляєш
+		  }
+
+resource "aws_security_group" "my_webserver" { . . . }
+
+
+terraform plan
+terraform apply
+	Apply complete! Resources: 1 added, 1 changed, 1 destroyed.
+
+--------------------------
+Вивід результатів - Outputs
+#виводити результат дій в aws  при запуску кода
+
+provider "aws" { . . . }
+resource "aws_eip" "my_statis_ip" { . . . }
+resource "aws_instance" "my_webserver" { . . . }
+resource "aws_security_group" "my_webserver" { . . . }
+
+output "webserver_instance_id" {
+	value = aws_instance.my_webserver.id
+}
+
+
+
+terraform plan
+terraform apple
+	Apply complete! Resources: 1 added, 1 changed, 1 destroyed.
+	Outputs:
+	webserver_instance_id = i-39234kfvkkvfk		 #виводить instance ID
+
+---------------------
+#показати адресу
+
+
+provider "aws" { . . . }
+resource "aws_eip" "my_statis_ip" { . . . }
+resource "aws_instance" "my_webserver" { . . . }
+resource "aws_security_group" "my_webserver" { . . . }
+output "webserver_instance_id" { . . . }
+
+output "webserver_public_ip_address" {
+	value = "aws_eip.my_static_ip.public_ip"
+}
+
+
+terraform plan
+terraform apply
+	Apply complete! Resources: 1 added, 1 changed, 1 destroyed.
+	Outputs:
+	webserver_instance_id = i-39234kfvkkvfk		 #виводить instance ID
+	weserver_public_ip_address = 35.182.80.243
+
+
+terraform output
+	weserver_public_ip_address = 35.182.80.243
+	webserver_instance_id = i-39234kfvkkvfk
+terraform show
+
+
+output "webserver_secGroup_id" {
+	value = aws_security_group.my_webserver.ip
+}
+output "webserver_secG_arn" {
+	value = aws_security_group.my_webserver.arn
+	description = "this is security group ARN"
+}
+
+-------------
+#прийнято output  примати в іншому файлі
+
+touch outputs.tf
+nano  output1.....2..
+
+---------------
 
