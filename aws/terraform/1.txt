@@ -1,0 +1,182 @@
+terraform - написання інфраструктури в коді
+мова програмування в хварних інфраструкурах
+файл.tf (не потрібно компіляції)
+
+
+альтернативи:
+-aws CloundFormation
+-Ansible
+-Puppet
+-Chef
+
+#install on Ubuntu
+wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+sudo apt update && sudo apt install terraform
+terraform --version
+
+extentions in VSCode:
+-HashiCorp terraform
+для того щоб встановлювався форматинг:
+file -> Preferences -> Settings -> Text Editor -> Formating -> поставити галочку format on save
+
+--------------------------
+Основи1: створення ресурсів AWS
+
+cd /learningTerra
+
+touch leason1.tf
+
+#створення креденшелів
+provider "aws"{
+	access_key = ""
+	secret_key = ""
+	region = "" 
+}
+
+#створення ресурсів
+resource "aws_instance" "My_Ununtu_test"{
+	ami = ""   # зайти в геріон та подивитися ami імеджа
+	instance_type = "t3.micro"
+}
+
+cd /learningTerra   #зайти в папку з файлами .tf
+
+ls /learningTerra
+	.terraform
+
+terraform init    #пройдеться по всім файлам та перевірити провайдера та скачає спеціальний файл який працює з aws
+створив папку .terraform і створив ве що треба для проєкту
+
+terraform plan   #пройделься по файлу, скаже що він збираєтся створить і що зробить (debugging)
+
+terrafrm apply   # створити
+
+ls /learningTerra
+	.terraform
+	leason1.tf
+	terraform.tfstate
+	terrafonm.tfstate.backup
+
+
+якщо запустити ще раз terraform apply  то нічого не створить(всі відповідає цьому файлу)
+після створення (terraform apply) він створює 2 важливих файли: terraform.tfstate  та  terrafonm.tfstate.backup
+terraform.tfstate це json формат файла в якому описанні всі ресурси(інстанси) проєкту які були створенні
+якщо його видалити terraform не буде знати що зараз в хвмарі і буде створювати все по плану знову
+
+resource "aws_instance" "My_Ununtu_test"{
+	count = 3  #створити три інстанса
+	ami = ""   # зайти в геріон та подивитися ami імеджа
+	instance_type = "t3.micro"
+}
+
+terraform plan  #plan: 2 to add, 0 to change, 0 to destroy.
+terraforn apply #Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
+
+--------------------
+Основи2: змінення ресурсів AWS
+
+
+provider "aws"{
+	access_key = ""
+	secret_key = ""
+	region = "" 
+}
+resource "aws_instance" "My_Ununtu_test"{
+	count = 3
+	ami = ""
+	instance_type = "t3.small" # змінили з micro на small 
+}
+
+#змінюємо код прям свередині файлу, зберігаємо та запускаємо
+
+cd /learningTerra #зайти в папку з файлами .tf
+
+terraform plan #plan:0 to add, 3 to change, 0 to destroy.
+
+terraform apply #він зупинить 3 сервери, змінить тип, включить 3 сервери
+	Apply complete! Resources: 0 added, 3 changed, 0 destroyed.
+
+
+
+
+provider "aws"{
+	access_key = ""
+	secret_key = ""
+	region = "" 
+}
+resource "aws_instance" "My_Ununtu_test"{
+	count = 3
+	ami = ""
+	instance_type = "t3.small" # змінили з micro на small 
+
+    tags = {
+    Name = "my ubuntu server"		#добавляємо параметр тег
+    Owner = "user test1"
+    Project = "Terraform Lessons one"
+  }
+}
+
+terraform plan
+terraform apply
+	Apply complete! Resources: 0 added, 3 changed, 0 destroyed.
+
+
+
+Тепер якщо відбулися якісь зміни в клауді (якісь зміни створили(добавили) руками)
+
+і якщо виконти команду terraform apply (yes)
+
+то він видалить всі зміни які були створенні руками
+
+і все повертається до того як прописано в описувально файлі
+
+--------------------------------------------------------
+Основи3: видалення ресурсів AWS
+
+змінюємо cound = 1 (залишеємо тільки один сервер з трьох)
+можна також вибрати нуль, тоді видаляться всі сервери
+
+provider "aws"{
+	access_key = ""
+	secret_key = ""
+	region = "" 
+}
+resource "aws_instance" "My_Ununtu_test"{
+	count = 1
+	ami = ""
+	instance_type = "t3.small" # змінили з micro на small 
+
+    tags = {
+    Name = "my ubuntu server"		#добавляємо параметр тег
+    Owner = "user test1"
+    Project = "Terraform Lessons one"
+  }
+}
+
+terraform plan
+terraform apply  (yes)
+	Apply complete! Resources: 0 added, 0 changed, 1 destroyed.
+
+terraform destroy  (yes)	#видалеє проект повністю
+	Destroy complete! Resources: 1 destroyed.
+
+
+
+
+!!!!!	access_key = "" secret_key = "" !!!!!!
+export AWS_ACCESS_KEY_ID=""
+export AWS_SECRET_ACCESS_KEY=""
+export AWS_DEFAULT_REGION=eu-central-1
+
+#створити inverting values  та додати ключі туди
+#вони зберігаються тільки в сесії відкритого терміналу
+
+конфіденційну інфу дивилити та залишити 
+
+provider "aws"{}
+
+aws s3 ls
+aws ec2 describe-instances
+
+
