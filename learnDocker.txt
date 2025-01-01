@@ -188,6 +188,10 @@ docker swarm leave --force
 https://docs.docker.com/reference/cli/docker/swarm/
 docker swarm
 
+
+
+
+
 docker swarm init
 ---copy created token on other nodes---
 docker node ls
@@ -208,11 +212,6 @@ sudo apt install haproxy -y
 sudo nano /etc/haproxy/haproxy.cfg
 sudo haproxy -c -f /etc/haproxy/haproxy.cfg
 sudo systemctl restart haproxy
-
-
-
-
-
 
 
 
