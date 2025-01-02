@@ -1,0 +1,157 @@
+﻿ Головні об’єкти K*S
+1) Pod — об’єкт і якого працює один або декілька containers.
+2) Deployment -налаштування однакових Pods, потрібен для Auto Scaling та для оновлення Container Image,  тримає мінімальну кількість робочих Pods (replicas).
+3) Service — надає доступ до Deployment через:
+   -ClusterIP (внутрішній ip який доступний тільки в кластері)
+   -NodePort 
+   -LoadBalancer
+   -ExternalName (DNS ім’я)
+4) Nodes — сервера де все це працює
+5) Cluster — логічне об’єднання Nodes 
+
+
+
+#create/delete cluster
+minikube start
+minikube stop 
+minikube delete
+
+
+#enter in kluster (ures: root) (user: docker password: tcuser)
+minicube ssh
+
+
+minikube start --cpus=4 --memory=8gb —disk-size=15gb
+
+
+minikube status
+minikube ip
+minikube start --cpus=3 --memory=2gb --disk-size=5gb -p=nmd221 —vm-driver=virtualbox
+
+
+kubectl get nodes
+kubectl get pods
+kubeclt get service
+kubectl get componentstatus
+kubectl cluster-info
+
+kubectl run site --image=ubuntu/apache2
+kubectl run site2 --image=ubuntu/apache2 --port=80
+kubectl port-forward site2 8090:80
+nano service.yaml
+kubectl create -f service.yaml
+
+kubectl get svc site2
+
+kubectl apply -f service.yaml
+
+kubectl apply -f ports-service.yaml
+kubuctl port-forward <pod_name> 8000:31531
+
+
+
+
+------------------------------------------
+------------------------------------------
+-------------------------------------------
+docker swarm
+
+docker swarm init
+---copy created token on other nodes---
+docker node ls
+nano Dockerfile
+nano index.html
+docker images
+docker ps -a
+docker build -t my-nginx1:latest .
+docker images
+docker service create --name my-service1 --replicas 3 -p 80:80 my-nginx1
+docker service ls
+docker service rm my-service1
+docker service ls
+docker swarm leave --force
+
+sudo apt update
+sudo apt install haproxy -y
+sudo nano /etc/haproxy/haproxy.cfg
+sudo haproxy -c -f /etc/haproxy/haproxy.cfg
+sudo systemctl restart haproxy
+
+
+apt update
+snap istall docker
+docker swarm init --advertise-addr  192.168.1.56
+
+docker swarm join-token manager   глянути токен і команду мастера
+docker swarm join-token worker    глянути токен і команду воркера
+
+
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+AWS EKS
+
+
+export AWS_ACCESS_KEY_ID=xxxxxxxxxxxxxxxxx
+ecport AWS_SECRET_ACCESS_KEY=yyyyyyyyyyyyyyyyyy
+export AWS_DEFAULT_REGION=us-west-2
+
+aws --version
+aws configure
+aws eks update-kubeconfig --name DimaK8S
+kubectl get nodes
+kubectl get all
+aws s3 ls
+aws ec2 describe-instances
+aws configure --profile root
+
+
+eksctl version
+eksctl create cluster --name DimaK8S 
+kubectl get nodes
+eksctl delete cluster —name DimaK8S
+
+
+
+------створити конфігураційний файл для створення кластера-----
+
+nano my-cluster.yml
+
+#######
+apiVersion: eksctl.io/vlalpha5
+kind: ClusterConfig
+
+matedata:
+  name  : DimaK8S
+  region: us-wesr-2
+
+vpc:
+  subnets:
+    private:
+      us-west-2a: { id: subnet-kjefvhbvfehk }
+      us-west-2b: { id: subnet-vfkjndeveejb }
+      us-west-2c: { id: subnet-nckkcmcmmcmk }
+
+nodeGroupss:
+  - name		 : worker-node-group-1
+    instanceType   : m5.large
+    desiredCapacity: 2
+#########
+
+eksctl create cluster -f my-cluster.yml
+kubectl get nodes
+eksctl delete cluster -f my-cluster.yml
+
+----------------------------------------------------------------------------
+---------------------------------------------------------------------------
+----------------------------------------------------------------------------
+free cluster 
+
+https://labs.play-with-k8s.com/
+
+---змінити лейбл , назвати
+kubectl get nodes
+kubectl get nodes --show-labels
+kubectl label node node2 node-role.kubernetes.io/worker=
+kubectl get nodes
