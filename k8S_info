@@ -26,7 +26,13 @@ minikube start --cpus=4 --memory=8gb —disk-size=15gb
 
 minikube status
 minikube ip
-minikube start --cpus=3 --memory=2gb --disk-size=5gb -p=nmd221 —vm-driver=virtualbox
+minikube start --cpus=3 --memory=2gb --disk-size=5gb -p=nmd221--vm-driver=virtualbox
+
+
+
+minikube start --nodes=2 --vm-driver=virtualbox
+kubectl get nodes
+
 
 
 kubectl get nodes
