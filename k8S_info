@@ -32,7 +32,7 @@ minikube start --cpus=3 --memory=2gb --disk-size=5gb -p=nmd221--vm-driver=virtua
 
 minikube start --nodes=2 --vm-driver=virtualbox
 kubectl get nodes
-
+kubectl get nodes -o wide
 
 
 kubectl get nodes
