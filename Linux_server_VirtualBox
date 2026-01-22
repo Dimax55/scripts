@@ -1,3 +1,7 @@
+----turn off KVM modul----------
+sudo modprobe -r kvm_intel kvm
+--------------------------------
+
 sudo nginx -t
 sudo systemctl restart nginx
 sudo systemctl status nginx
