@@ -33,3 +33,5 @@ sudo apt autoremove --purge
 sudo apt autoclean
 nginx -v
 --------------------------
+-----Users----------
+su dima
