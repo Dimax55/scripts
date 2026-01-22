@@ -1,7 +1,6 @@
 ----turn off KVM modul----------
 sudo modprobe -r kvm_intel kvm
 --------------------------------
-
 sudo nginx -t
 sudo systemctl restart nginx
 sudo systemctl status nginx
@@ -33,5 +32,64 @@ sudo apt autoremove --purge
 sudo apt autoclean
 nginx -v
 --------------------------
------Users----------
+------SSH-KEYGEN----------
+master-PC:
+sudo systemctl restart ssh
+sudo systemctl status ssh
+
+ssh-keygen -b 4096
+ll .ssh
+cat .ssh/id_ed25519.pub
+ssh-copy-id user@IPaddress
+ssh user@IPadress
+---------------------------
+-----Change Users----------
 su dima
+-------------------------
+Web-1
+sudo apt update -y
+sudo install nano -y
+sudo install nginx -y
+echo "
+<!DOCTYPE html>
+<html>
+<head>
+  <title>VM2</title>
+</head>
+<body>
+  <h1>Bird from VM2</h1>
+  <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxISEBAQEhAPDxAPDw8>
+</body>
+</html>
+" > index.html
+
+Load Balancer
+nano /etc/nginx/site-aval
+-----------------------
+---Static address-------
+nano /etc/netplan/50-cloud-init.yaml
+
+#network:
+#  version: 2
+#  ethernets:
+#    enp0s3:
+#      dhcp4: true
+network:
+  ethernets:
+    enp0s3:
+      addresses:
+      - 192.168.0.54/24
+      gateway4: 192.168.0.1
+      nameservers:
+        addresses:
+        - 8.8.8.8
+  version: 2
+
+sudo netplan apply
+-----------------------
+
+
+
+
+
+
