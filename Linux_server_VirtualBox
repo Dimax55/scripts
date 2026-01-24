@@ -88,6 +88,19 @@ network:
 sudo netplan apply
 -----------------------
 
+----Python Flask app-----
+
+cd /me_app_project
+
+python3 -m venv venv
+source venv/bin/activate
+pip install flask
+
+deactivate
+rm -rf venv
+
+
+
 
 
 
