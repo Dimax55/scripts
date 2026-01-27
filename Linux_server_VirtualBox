@@ -50,6 +50,8 @@ Web-1
 sudo apt update -y
 sudo install nano -y
 sudo install nginx -y
+nano  /var/log/nginx/access.log
+nano /var/log/nginx/error.log
 echo "
 <!DOCTYPE html>
 <html>
