@@ -246,6 +246,18 @@ sudo echo "
 " > /var/www/html/index.html
 sudo systemctl restart nginx
 
+------Sec scaner---lynis
+sudo apt update
+sudo apt install lynis -y
+
+lynis show version
+sudo lynis audit system
+
+sudo less /var/log/lynis.log
+sudo less /var/log/lynis-report.dat
+
+
+
 
 
 
