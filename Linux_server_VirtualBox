@@ -34,6 +34,8 @@ nginx -v
 --------------------------
 ------SSH-KEYGEN----------
 master-PC:
+ssh-add -L
+
 sudo systemctl restart ssh
 sudo systemctl status ssh
 
